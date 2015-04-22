@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1429676829 source:/home/r1413/Dropbox/CSCI2270/Duncan_CSCI2270_FinalProject/3D Chess Game/main.cpp
+	<iostream>
+	"chessBoard.h"
+
+1429678515 /home/r1413/Dropbox/CSCI2270/Duncan_CSCI2270_FinalProject/3D Chess Game/chessBoard.h
+	<iostream>
+
+1429676574 source:/home/r1413/Dropbox/CSCI2270/Duncan_CSCI2270_FinalProject/3D Chess Game/chessBoard.cpp
+	<iostream>
+	"chessBoard.h"
+
