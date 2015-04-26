@@ -32,6 +32,8 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="chessBoard.cpp" />
+		<Unit filename="chessBoard.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

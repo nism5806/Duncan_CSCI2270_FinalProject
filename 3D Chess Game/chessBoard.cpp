@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include "chessBoard.h"
 
 using namespace std;
@@ -25,6 +26,7 @@ chessBoard::chessBoard()
     }
 
     //Create pieces for player 1 and player 2
+
     int pieceCount = 0;
     for(int x = 0; x < boardSize; x++){
         for(int y = 0; y < boardSize/4; y++){
@@ -36,7 +38,11 @@ chessBoard::chessBoard()
                 p1piece->xMoves = 1;
                 p1piece->yMoves = 1;
                 p1piece->zMoves = 1;
+                p1piece->xPosition = x;
+                p1piece->yPosition = y;
+                p1piece->zPosition = z;
                 board[x][y][z] = p1piece;
+                p1Pieces.push_back(p1piece);
                 cout<<"Player 1 piece created at: "<<x<<", "<<y<<", "<<z<<endl;
 
                 chessPiece *p2piece = new chessPiece;
@@ -45,7 +51,11 @@ chessBoard::chessBoard()
                 p2piece->xMoves = 1;
                 p2piece->yMoves = 1;
                 p2piece->zMoves = 1;
+                p2piece->xPosition = x;
+                p2piece->yPosition = boardSize-y-1;
+                p2piece->zPosition = z;
                 board[x][boardSize-y-1][z] = p2piece;
+                p2Pieces.push_back(p2piece);
                 cout<<"Player 2 piece created at: "<<x<<", "<<boardSize-y-1<<", "<<z<<endl<<endl;
 
                 pieceCount++;
@@ -99,6 +109,7 @@ chessBoard::chessBoard(int limit)
                 p1piece->yPosition = y;
                 p1piece->zPosition = z;
                 board[x][y][z] = p1piece;
+                p1Pieces.push_back(p1piece);
                 cout<<"Player 1 piece created at: "<<x<<", "<<y<<", "<<z<<endl;
 
                 chessPiece *p2piece = new chessPiece;
@@ -111,6 +122,7 @@ chessBoard::chessBoard(int limit)
                 p2piece->yPosition = boardSize-y-1;
                 p2piece->zPosition = z;
                 board[x][boardSize-y-1][z] = p2piece;
+                p2Pieces.push_back(p2piece);
                 cout<<"Player 2 piece created at: "<<x<<", "<<boardSize-y-1<<", "<<z<<endl<<endl;
 
                 pieceCount++;
@@ -137,7 +149,7 @@ chessBoard::~chessBoard()
         for(int y = 0; y < boardSize; y++){
             cout<<"Deleting array: ("<<x<<", "<<y<<")"<<endl;
             delete [] board[x][y];
-            /*for(int z = 0; z < boardSize; z++){
+            for(int z = 0; z < boardSize; z++){
                 //board[x][y][z] = new chessPiece;
                 cout<<"Place created at: ";
                 cout<<x<<", "<<y<<", "<<z<<endl;
@@ -145,36 +157,170 @@ chessBoard::~chessBoard()
             }
         }
     }*/
-    delete [] board;
+    delete []board;
 }
 
-void createPiece()
+void chessBoard::createPiece()
 {
     //This method will be implemented at a later time
 }
 
-void deletePiece()
+void chessBoard::deletePiece(chessPiece *piece)
 {
     //This method will be used to delete a piece either at the end of the game or during an attack move
+    //This maybe also used by the move function
+
+    //The placement on the board needs to be cleared and the pointer in the respective array removed
+    //First the placement
+    board[piece->xPosition][piece->yPosition][piece->zPosition] = NULL;
+
+    //Now the array
+    int index;
+    if(piece->team == 1){
+        //player 1 piece
+        for(unsigned int i = 0; i < p1Pieces.size(); i++){
+            if(piece == p1Pieces[i]){
+                index = i;
+                cout<<"Deletion index set"<<endl;
+                p1count--;
+                p2taken++;
+                break;
+            }
+        }
+        p1Pieces.erase(p1Pieces.begin()+index);
+    }
+    else{
+        for(unsigned int i = 0; i < p2Pieces.size(); i++){
+            if(piece == p2Pieces[i]){
+                index = i;
+                cout<<"Deletion index set"<<endl;
+                p2count--;
+                p1taken++;
+                break;
+            }
+        }
+        p2Pieces.erase(p2Pieces.begin()+index);
+    }
 }
 
-void movePiece()
+void chessBoard::movePiece()
 {
     //This method is for moving a piece during the game
     //It will check for piece encounters and it will act accordingly
 }
 
-chessPiece *locatePieces(std::string)
+chessPiece *chessBoard::locatePieces(std::string)
 {
     //This function will be implemented at a later time
 }
 
-void p1Attack()
+void chessBoard::p1Attack()
 {
     //This function will need some thought about functionality before coding
 }
 
-void p2Attack()
+void chessBoard::p2Attack()
 {
     //This function is like p1Attack and may be absorbed into that method
+}
+
+void chessBoard::printBoard()
+{
+    //Print the contents of the board
+    for(int x = 0; x < boardSize; x++){
+        for(int y = 0; y < boardSize; y++){
+            for(int z = 0; z < boardSize; z++){
+                if(board[x][y][z] != NULL){
+                    //There is a piece here
+                    cout<<"Player "<<board[x][y][z]->team<<" "<<board[x][y][z]->pieceType<<endl;
+                    cout<<"Located at: ("<<x<<","<<y<<","<<z<<")"<<endl<<endl;
+                }
+            }
+        }
+    }
+}
+
+bool chessBoard::isPiece(int x, int y, int z)
+{
+    //Is it within the boundaries of the board?
+    if(x >= 0 && x < boardSize && y >= 0 && y < boardSize && z >= 0 && z < boardSize){
+        //Is there a game piece at this location?
+        if(board[x][y][z] != NULL){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    else{
+        return false;
+    }
+}
+
+chessPiece *chessBoard::getPiece(int x, int y, int z)
+{
+    //This method should return a pointer to a piece
+    if(isPiece(x,y,z)){
+        return board[x][y][z];
+    }
+    else{
+        cout<<"There is no piece there"<<endl;
+        return NULL;
+    }
+}
+
+void chessBoard::pieceFunctions(int player)
+{
+    //Piece function stuff
+    vector<chessPiece*> temp;
+    if(player == 1){
+        //Player one pieces
+        temp = p1Pieces;
+    }
+    else{
+        //Player two pieces
+        temp = p2Pieces;
+    }
+
+    //Display player pieces
+    cout<<"Available pieces and locations"<<endl;
+    for(int i = 0; i < temp.size(); i++){
+        cout<<i<<": "<<temp[i]->pieceType<<" ("<<temp[i]->xPosition<<","<<temp[i]->yPosition<<","<<temp[i]->zPosition<<")"<<endl;
+    }
+
+    //Display menu of possible actions;
+    string input;
+    chessPiece *tempPiece;
+    while(true){
+        cout<<"What will you do?"<<endl;
+        cout<<"1) Print Board"<<endl;
+        cout<<"2) Move Piece"<<endl;
+
+        getline(cin, input);
+        if(atoi(input.c_str()) == 1){
+            //Print all the pieces on the board
+            printBoard();
+        }
+        else if(atoi(input.c_str()) == 2){
+            //Select a piece and them move it
+            cout<<"Select a piece to move"<<endl;
+            getline(cin, input);
+            if(atoi(input.c_str()) >= 0 && atoi(input.c_str()) < temp.size()){
+                int x,y,z;
+                tempPiece = temp[atoi(input.c_str())];
+                cout<<"Selected: "<<tempPiece->pieceType<<endl<<endl;
+                cout<<"Enter x, y and z moves separated by a space"<<endl;
+                //cin>>x>>y>>z;
+                //movePiece();
+                break;
+            }
+            else{
+                cout<<"Invalid Input"<<endl;
+            }
+        }
+        else{
+            cout<<"Invalid Input"<<endl;
+        }
+    }
+
 }
