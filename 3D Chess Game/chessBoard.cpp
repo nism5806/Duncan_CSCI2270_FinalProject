@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <string>
 #include "chessBoard.h"
 
 using namespace std;
@@ -203,10 +204,114 @@ void chessBoard::deletePiece(chessPiece *piece)
     }
 }
 
-void chessBoard::movePiece()
+/*void chessBoard::movePiece()
 {
     //This method is for moving a piece during the game
     //It will check for piece encounters and it will act accordingly
+}*/
+void chessBoard::movePiece(chessPiece* piece)
+{
+    //This method is for moving a piece during the game
+    //It will check for piece encounters and it will act accordingly
+    int xPos = piece->xPosition;
+    int yPos = piece->yPosition;
+    int zPos = piece->yPosition;
+    string possibleMoves[27];
+    vector<string> moves;
+    vector<string> attacks;
+    for(int i = 0; i < 27; i++){
+        possibleMoves[i] = "";
+    }
+
+    /*bool possibleMoves[27];
+    //Set all the possible locations to zero
+    for(int i = 0; i < 27; i++){
+        possibleMoves[i] = false;
+    }*/
+    int possIndex = 0;
+    //Display possible move and attack locations
+    for(int i = -1; i <= 1; i++){
+        //Check the previous and next x position
+        for(int j = -1; j <= 1; j++){
+            //Check the previous and next y position
+            for(int k = -1; k <= 1; k++){
+                //Check the previous and next z position
+                if(xPos+i >= 0 && xPos+i < boardSize && yPos+j >= 0 && yPos+j < boardSize && zPos+k >= 0 && zPos+k < boardSize){
+                    if((i+j+k == 1 || i+j+k == -1) && (i == 0 || j == 0 || k == 0)){
+                        //This is a move location
+                        if(!isPiece(xPos+i,yPos+j,zPos+k)){
+                            //The move location is valid
+                            //possibleMoves[possIndex] = true;
+
+                            possibleMoves[possIndex] = "m"+to_string(i)+to_string(j)+to_string(k);
+                            moves.push_back(to_string(i)+to_string(j)+to_string(k));
+                        }
+                    }
+                    else if(i == 0 && j == 0 && k == 0){
+                        //This is the piece location. Do nothing
+                    }
+                    else{
+                        //This is an attack location
+                        chessPiece *tempPiece = getPiece(xPos+i,yPos+j,zPos+k);
+                        if(tempPiece != NULL){
+                            if(tempPiece->team != piece->team){
+                                //Opposite teams
+                                //possibleMoves[possIndex] = true;
+                                possibleMoves[possIndex] = "a"+to_string(i)+to_string(j)+to_string(k);
+                                attacks.push_back(to_string(i)+to_string(j)+to_string(k));
+                            }
+                        }
+                    }
+                    possIndex++;
+                }
+            }
+        }
+    }
+    cout<<"Possible moves"<<endl;
+    for(int i = 0; i < moves.size(); i++){
+        if(i == 0){
+            cout<<moves[i];
+        }
+        else{
+            cout<<", "<<moves[i];
+        }
+    }
+    cout<<endl<<"Possible attacks"<<endl;
+    for(int i = 0; i < attacks.size(); i++){
+        if(attacks[i] != ""){
+            if(i == 0){
+                cout<<attacks[i];
+            }
+            else{
+                cout<<", "<<attacks[i];
+            }
+        }
+    }
+    cout<<endl;
+
+    //Now ask for a movement location
+    string input;
+    string moveto;
+    bool attack = false;
+    while(true){
+        cout<<"Where would you like to move?"<<endl;
+        getline(cin, input);
+        for(int i = 0; i < moves.size(); i++){
+            if(input == moves[i]){
+                moveto = moves[i];
+            }
+        }
+        for(int i = 0; i < attacks.size(); i++){
+            if(input == attacks[i]){
+                moveto = attacks[i];
+                attack = true;
+            }
+        }
+    }
+
+    if(attack){
+        deletePiece(getPiece())
+    }
 }
 
 chessPiece *chessBoard::locatePieces(std::string)
@@ -311,7 +416,7 @@ void chessBoard::pieceFunctions(int player)
                 cout<<"Selected: "<<tempPiece->pieceType<<endl<<endl;
                 cout<<"Enter x, y and z moves separated by a space"<<endl;
                 //cin>>x>>y>>z;
-                //movePiece();
+                movePiece(tempPiece);
                 break;
             }
             else{
