@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string>
+#include <cstring>
 #include "chessBoard.h"
 
 using namespace std;
@@ -216,12 +218,8 @@ void chessBoard::movePiece(chessPiece* piece)
     int xPos = piece->xPosition;
     int yPos = piece->yPosition;
     int zPos = piece->yPosition;
-    string possibleMoves[27];
     vector<string> moves;
     vector<string> attacks;
-    for(int i = 0; i < 27; i++){
-        possibleMoves[i] = "";
-    }
 
     /*bool possibleMoves[27];
     //Set all the possible locations to zero
@@ -241,10 +239,7 @@ void chessBoard::movePiece(chessPiece* piece)
                         //This is a move location
                         if(!isPiece(xPos+i,yPos+j,zPos+k)){
                             //The move location is valid
-                            //possibleMoves[possIndex] = true;
-
-                            possibleMoves[possIndex] = "m"+to_string(i)+to_string(j)+to_string(k);
-                            moves.push_back(to_string(i)+to_string(j)+to_string(k));
+                            moves.push_back(to_string(i+xPos)+to_string(j+yPos)+to_string(k+zPos));
                         }
                     }
                     else if(i == 0 && j == 0 && k == 0){
@@ -256,9 +251,6 @@ void chessBoard::movePiece(chessPiece* piece)
                         if(tempPiece != NULL){
                             if(tempPiece->team != piece->team){
                                 //Opposite teams
-                                //possibleMoves[possIndex] = true;
-                                possibleMoves[possIndex] = "a"+to_string(i)+to_string(j)+to_string(k);
-                                attacks.push_back(to_string(i)+to_string(j)+to_string(k));
                             }
                         }
                     }
@@ -292,41 +284,55 @@ void chessBoard::movePiece(chessPiece* piece)
     //Now ask for a movement location
     string input;
     string moveto;
+    int x,y,z;
     bool attack = false;
     while(true){
+        bool choice = false;
         cout<<"Where would you like to move?"<<endl;
-        getline(cin, input);
+        getline(cin,input,'\n');
         for(int i = 0; i < moves.size(); i++){
             if(input == moves[i]){
                 moveto = moves[i];
+                x = moveto[0]-'0';
+                y = moveto[1]-'0';
+                z = moveto[2]-'0';
+                choice = true;
             }
         }
         for(int i = 0; i < attacks.size(); i++){
             if(input == attacks[i]){
                 moveto = attacks[i];
+                x = moveto[0]-'0';
+                y = moveto[1]-'0';
+                z = moveto[2]-'0';
                 attack = true;
+                choice = true;
             }
+        }
+        if(!choice){
+            cout<<"Not a valid move"<<endl;
+        }else{
+            break;
         }
     }
 
     if(attack){
-        deletePiece(getPiece())
+        deletePiece(getPiece(x,y,z));
+        if(piece->team == 1){
+            p1taken ++;
+        }else{
+            p2taken ++;
+        }
+    }else{
+        piece->xPosition = x;
+        piece->yPosition = y;
+        piece->zPosition = z;
     }
 }
 
 chessPiece *chessBoard::locatePieces(std::string)
 {
     //This function will be implemented at a later time
-}
-
-void chessBoard::p1Attack()
-{
-    //This function will need some thought about functionality before coding
-}
-
-void chessBoard::p2Attack()
-{
-    //This function is like p1Attack and may be absorbed into that method
 }
 
 void chessBoard::printBoard()
@@ -369,7 +375,7 @@ chessPiece *chessBoard::getPiece(int x, int y, int z)
         return board[x][y][z];
     }
     else{
-        cout<<"There is no piece there"<<endl;
+        //cout<<"There is no piece there"<<endl;
         return NULL;
     }
 }
@@ -387,11 +393,7 @@ void chessBoard::pieceFunctions(int player)
         temp = p2Pieces;
     }
 
-    //Display player pieces
-    cout<<"Available pieces and locations"<<endl;
-    for(int i = 0; i < temp.size(); i++){
-        cout<<i<<": "<<temp[i]->pieceType<<" ("<<temp[i]->xPosition<<","<<temp[i]->yPosition<<","<<temp[i]->zPosition<<")"<<endl;
-    }
+
 
     //Display menu of possible actions;
     string input;
@@ -407,6 +409,12 @@ void chessBoard::pieceFunctions(int player)
             printBoard();
         }
         else if(atoi(input.c_str()) == 2){
+            //Display player pieces
+            cout<<"Available pieces and locations"<<endl;
+            for(int i = 0; i < temp.size(); i++){
+                cout<<i<<": "<<temp[i]->pieceType<<" ("<<temp[i]->xPosition<<","<<temp[i]->yPosition<<","<<temp[i]->zPosition<<")"<<endl;
+            }
+
             //Select a piece and them move it
             cout<<"Select a piece to move"<<endl;
             getline(cin, input);
@@ -428,4 +436,13 @@ void chessBoard::pieceFunctions(int player)
         }
     }
 
+}
+
+void chessBoard::gameStandings()
+{
+    cout<<"Player 1 had: "<<p1count<<" pieces left"<<endl;
+    cout<<"              taken "<<p1taken<<" pieces"<<endl<<endl;
+    cout<<"Player 1 had: "<<p2count<<" pieces left"<<endl;
+    cout<<"              taken "<<p2taken<<" pieces"<<endl<<endl;
+    cout<<"Thanks for playing! Goodbye!"<<endl;
 }

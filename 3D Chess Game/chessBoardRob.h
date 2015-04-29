@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#ifndef chessBoard.h
+#ifndef chessboard.h
 struct chessPiece
 {
     std::string pieceType;
@@ -15,11 +15,6 @@ struct chessPiece
     int zPosition;
 };
 
-struct boardInfo
-{
-    void printBoard(){};
-};
-
 class chessBoard
 {
 protected:
@@ -28,14 +23,13 @@ public:
     chessBoard(int);
     ~chessBoard();
     void createPiece(); //Implemented later
-    void deletePiece(chessPiece*);
-    void movePiece(chessPiece*);
+    void deletePiece();
+    void movePiece();
     chessPiece *locatePieces(std::string); //Implemented later
-    void printBoard();
-    bool isPiece(int, int, int);
-    chessPiece *getPiece(int, int, int);
-    void pieceFunctions(int);
-    void gameStandings();
+    void p1Attack();    //Unsure of how this should work exactly, may need editing
+    void p2Attack();
+    bool isPiece(int,int,int);
+    void movePiece(chessPiece*);
 private:
     int boardSize;
     chessPiece ****board;
@@ -44,7 +38,7 @@ private:
     int p1taken;    //Pieces taken from the enemy
     int p2taken;
 
-    std::vector<chessPiece*> p1Pieces;   //Used for quick access of pieces
+    std::vector<chessPiece*> p1Pieces;
     std::vector<chessPiece*> p2Pieces;
 };
-#endif // chessBoard
+#endif // chessboard

@@ -35,6 +35,8 @@ int main()
             turn = true;
         }
         else if(atoi(input.c_str()) == 2){
+            board.gameStandings();
+            break;
             //Display current game standings and then quit
         }
         else{
