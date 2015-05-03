@@ -1,7 +1,9 @@
+#ifndef CHESSBOARD_INCLUDED
+#define CHESSBOARD_INCLUDED
 #include <iostream>
 #include <vector>
 
-#ifndef chessBoard.h
+
 struct chessPiece
 {
     std::string pieceType;
@@ -30,7 +32,7 @@ public:
     void createPiece(); //Implemented later
     void deletePiece(chessPiece*);
     void movePiece(chessPiece*);
-    chessPiece *locatePieces(std::string); //Implemented later
+    std::vector<chessPiece*> locatePieces(std::string); //Implemented later
     void printBoard();
     bool isPiece(int, int, int);
     chessPiece *getPiece(int, int, int);
@@ -47,4 +49,4 @@ private:
     std::vector<chessPiece*> p1Pieces;   //Used for quick access of pieces
     std::vector<chessPiece*> p2Pieces;
 };
-#endif // chessBoard
+#endif // CHESSBOARD_INCLUDED

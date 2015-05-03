@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string>
 #include <cstring>
+#include <cstdlib>
 #include "chessBoard.h"
 
 using namespace std;
@@ -226,6 +227,49 @@ void chessBoard::movePiece(chessPiece* piece)
     for(int i = 0; i < 27; i++){
         possibleMoves[i] = false;
     }*/
+    if(xPos-piece->xMoves>=0){
+        if(isPiece(xPos-piece->xMoves,yPos,zPos)&&getPiece(xPos-piece->xMoves,yPos,zPos)->team!=piece->team){
+            attacks.push_back(to_string(xPos-piece->xMoves)+to_string(yPos)+to_string(zPos));
+        }else{
+            moves.push_back(to_string(xPos-piece->xMoves)+to_string(yPos)+to_string(zPos));
+        }
+    }
+    if(xPos+piece->xMoves<boardSize){
+        if(isPiece(xPos+piece->xMoves,yPos,zPos)&&getPiece(xPos+piece->xMoves,yPos,zPos)->team!=piece->team){
+            attacks.push_back(to_string(xPos+piece->xMoves)+to_string(yPos)+to_string(zPos));
+        }else{
+            moves.push_back(to_string(xPos+piece->xMoves)+to_string(yPos)+to_string(zPos));
+        }
+    }
+    if(yPos-piece->yMoves>=0){
+        if(isPiece(xPos,yPos-piece->yMoves,zPos)&&getPiece(xPos,yPos-piece->yMoves,zPos)->team!=piece->team){
+            attacks.push_back(to_string(xPos)+to_string(yPos-piece->yMoves)+to_string(zPos));
+        }else{
+            moves.push_back(to_string(xPos)+to_string(yPos-piece->yMoves)+to_string(zPos));
+        }
+    }
+    if(yPos+piece->yMoves<boardSize){
+        if(isPiece(xPos,yPos+piece->yMoves,zPos)&&getPiece(xPos,yPos+piece->yMoves,zPos)->team!=piece->team){
+            attacks.push_back(to_string(xPos)+to_string(yPos+piece->yMoves)+to_string(zPos));
+        }else{
+            moves.push_back(to_string(xPos)+to_string(yPos+piece->yMoves)+to_string(zPos));
+        }
+    }
+    if(zPos-piece->zMoves>=0){
+        if(isPiece(xPos,yPos,zPos-piece->zMoves)&&getPiece(xPos,yPos,zPos-piece->zMoves)->team!=piece->team){
+            attacks.push_back(to_string(xPos)+to_string(yPos)+to_string(zPos-piece->zMoves));
+        }else{
+            moves.push_back(to_string(xPos)+to_string(yPos)+to_string(zPos-piece->zMoves));
+        }
+    }
+    if(zPos+piece->zMoves<boardSize){
+        if(isPiece(xPos,yPos,zPos+piece->zMoves)&&getPiece(xPos,yPos,zPos+piece->zMoves)->team!=piece->team){
+            attacks.push_back(to_string(xPos)+to_string(yPos)+to_string(zPos+piece->zMoves));
+        }else{
+            moves.push_back(to_string(xPos)+to_string(yPos)+to_string(zPos+piece->zMoves));
+        }
+    }
+    /**
     int possIndex = 0;
     //Display possible move and attack locations
     for(int i = -1; i <= 1; i++){
@@ -251,6 +295,7 @@ void chessBoard::movePiece(chessPiece* piece)
                         if(tempPiece != NULL){
                             if(tempPiece->team != piece->team){
                                 //Opposite teams
+                                attacks.push_back(to_string(i+xPos)+to_string(j+yPos)+to_string(k+zPos));
                             }
                         }
                     }
@@ -259,6 +304,7 @@ void chessBoard::movePiece(chessPiece* piece)
             }
         }
     }
+    **/
     cout<<"Possible moves"<<endl;
     for(int i = 0; i < moves.size(); i++){
         if(i == 0){
@@ -329,10 +375,28 @@ void chessBoard::movePiece(chessPiece* piece)
         piece->zPosition = z;
     }
 }
+/**
+    Function Prototype:
+    vector<chessPiece*> locatePieces(std::string name)
 
-chessPiece *chessBoard::locatePieces(std::string)
+    Function description:
+    returns a vector containing all pieces of the type name
+
+
+**/
+vector<chessPiece*> chessBoard::locatePieces(std::string name)
 {
-    //This function will be implemented at a later time
+    vector<chessPiece*> pieces;
+    for(int x = 0; x < boardSize; x++){
+        for(int y = 0; y < boardSize; y++){
+            for(int z = 0; z < boardSize; z++){
+                if(board[x][y][z]->pieceType ==name){
+                    pieces.push_back(board[x][y][z]);
+                }
+            }
+        }
+    }
+    return pieces;
 }
 
 void chessBoard::printBoard()
